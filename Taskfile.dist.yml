@@ -1,0 +1,135 @@
+version: "3"
+
+vars:
+  DOCKER_REPO: ghcr.io
+  DOCKER_OWNER: ilyes512
+  # Latatest version of Hadolint: https://hub.docker.com/r/hadolint/hadolint/tags or https://github.com/hadolint/hadolint/releases
+  HADOLINT_TAG_VERSION: v2.12.0
+
+env:
+  BUILDKIT_PROGRESS: plain
+
+silent: true
+
+tasks:
+
+  build:
+    desc: Build all PHP Docker image targets of both the FPM and Apache variants
+    cmds:
+      - task: build:fpm
+      - task: build:apache
+
+  build:fpm:
+    desc: Build all PHP Docker image targets of the FPM variant
+    deps: [lint:fpm]
+    vars:
+      DOCKER_IMAGE_NAME: php84
+      DOCKER_FILE_PATH: ./fpm/Dockerfile
+    cmds:
+      - task: build:target
+        vars:
+          TARGET: runtime
+          DOCKER_IMAGE_NAME: '{{.DOCKER_IMAGE_NAME}}'
+          DOCKER_FILE_PATH: '{{.DOCKER_FILE_PATH}}'
+      - task: build:target
+        vars:
+          TARGET: builder
+          DOCKER_IMAGE_NAME: '{{.DOCKER_IMAGE_NAME}}'
+          DOCKER_FILE_PATH: '{{.DOCKER_FILE_PATH}}'
+      - task: build:target
+        vars:
+          TARGET: builder_nodejs
+          DOCKER_IMAGE_NAME: '{{.DOCKER_IMAGE_NAME}}'
+          DOCKER_FILE_PATH: '{{.DOCKER_FILE_PATH}}'
+
+  build:apache:
+    desc: Build all PHP Docker image targets of the Apache variant
+    deps: [lint:apache]
+    vars:
+      DOCKER_IMAGE_NAME: php84/apache
+      DOCKER_FILE_PATH: ./apache/Dockerfile
+    cmds:
+      - task: build:target
+        vars:
+          TARGET: runtime
+          DOCKER_IMAGE_NAME: '{{.DOCKER_IMAGE_NAME}}'
+          DOCKER_FILE_PATH: '{{.DOCKER_FILE_PATH}}'
+      - task: build:target
+        vars:
+          TARGET: builder
+          DOCKER_IMAGE_NAME: '{{.DOCKER_IMAGE_NAME}}'
+          DOCKER_FILE_PATH: '{{.DOCKER_FILE_PATH}}'
+      - task: build:target
+        vars:
+          TARGET: builder_nodejs
+          DOCKER_IMAGE_NAME: '{{.DOCKER_IMAGE_NAME}}'
+          DOCKER_FILE_PATH: '{{.DOCKER_FILE_PATH}}'
+
+  build:target:
+    preconditions:
+      - sh: >
+          test '{{.TARGET}}' = 'runtime'
+          -o '{{.TARGET}}' = 'builder'
+          -o '{{.TARGET}}' = 'builder_nodejs'
+        msg: TARGET needs to contain the Docker TARGET [runtime, builder, builder_nodejs]
+    vars:
+      VERSION: '{{.VERSION | default "latest"}}'
+    cmds:
+      - docker build
+        --target {{.TARGET}}
+        --tag {{.DOCKER_REPO}}/{{.DOCKER_OWNER}}/{{.DOCKER_IMAGE_NAME}}:{{.TARGET}}-{{.VERSION}}
+        --file {{.DOCKER_FILE_PATH}}
+        .
+    requires:
+      vars: [DOCKER_IMAGE_NAME, TARGET, DOCKER_FILE_PATH]
+
+  lint:fpm:
+    desc: Apply a Dockerfile linter (https://github.com/hadolint/hadolint)
+    cmds:
+      - task: lint
+        vars: { DOCKERFILE_PATH: fpm/Dockerfile }
+
+  lint:apache:
+    desc: Apply a Dockerfile linter (https://github.com/hadolint/hadolint)
+    cmds:
+      - task: lint
+        vars: { DOCKERFILE_PATH: apache/Dockerfile }
+
+  lint:
+    cmds:
+      - docker run
+        --interactive
+        --rm
+        --volume $(pwd)/.hadolint.yml:/.hadolint.yml
+        hadolint/hadolint:{{.HADOLINT_TAG_VERSION}}
+        hadolint
+        -
+        < {{.DOCKERFILE_PATH}}
+    requires:
+      vars: [DOCKERFILE_PATH]
+
+  shell:fpm:
+    desc: Interactive shell
+    interactive: true
+    vars:
+      DOCKER_IMAGE_NAME: php84
+    cmds:
+      - docker run
+        --interactive
+        --tty
+        --rm
+        {{.DOCKER_REPO}}/{{.DOCKER_OWNER}}/{{.DOCKER_IMAGE_NAME}}:builder_nodejs-{{.VERSION | default "latest" }}
+        bash
+
+  shell:apache:
+    desc: Interactive shell
+    interactive: true
+    vars:
+      DOCKER_IMAGE_NAME: php84/apache
+    cmds:
+      - docker run
+        --interactive
+        --tty
+        --rm
+        {{.DOCKER_REPO}}/{{.DOCKER_OWNER}}/{{.DOCKER_IMAGE_NAME}}:builder_nodejs-{{.VERSION | default "latest" }}
+        bash
