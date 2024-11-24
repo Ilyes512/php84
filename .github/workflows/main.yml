@@ -1,0 +1,52 @@
+name: Main
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  actions: write
+  packages: write
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    uses: Ilyes512/github-actions/.github/workflows/build-php.yml@0.4.0
+    strategy:
+      fail-fast: false
+      matrix:
+        platform:
+          - linux/amd64
+          - linux/arm64
+        docker:
+          - dockerfile: fpm/Dockerfile
+            image-name: ghcr.io/${{ github.repository }}
+            key: fpm
+          - dockerfile: apache/Dockerfile
+            image-name: ghcr.io/${{ github.repository }}/apache
+            key: apache
+    with:
+      runs-on: ubuntu-24.04
+      platform: ${{ matrix.platform }}
+      image-name: ${{ matrix.docker.image-name }}
+      dockerfile: ${{ matrix.docker.dockerfile }}
+      cache-key: ${{ matrix.os }}-buildx-${{ matrix.platform }}-${{ matrix.docker.key }}-${{ github.ref_name }}-${{ github.sha }}
+      cache-restore-keys: |
+        ${{ matrix.os }}-buildx-${{ matrix.platform }}-${{ matrix.docker.key }}-${{ github.ref_name }}-
+        ${{ matrix.os }}-buildx-${{ matrix.platform }}-${{ matrix.docker.key }}
+
+  merge:
+    uses: Ilyes512/github-actions/.github/workflows/merge-php.yml@0.4.0
+    needs: build
+    strategy:
+      matrix:
+        image-name:
+          - ghcr.io/${{ github.repository }}
+          - ghcr.io/${{ github.repository }}/apache
+    with:
+      runs-on: ubuntu-24.04
+      image-name: ${{ matrix.image-name }}
