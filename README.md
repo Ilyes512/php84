@@ -9,11 +9,11 @@ A PHP 8.4 (FPM and Apache) based Docker base image.
 ```
 docker pull ghcr.io/ilyes512/php84:runtime-latest
 docker pull ghcr.io/ilyes512/php84:builder-latest
-docker pull ghcr.io/ilyes512/php84:builder-nodejs-latest
+docker pull ghcr.io/ilyes512/php84:builder_nodejs-latest
 
 docker pull ghcr.io/ilyes512/php84/apache:runtime-latest
 docker pull ghcr.io/ilyes512/php84/apache:builder-latest
-docker pull ghcr.io/ilyes512/php84/apache:builder-nodejs-latest
+docker pull ghcr.io/ilyes512/php84/apache:builder_nodejs-latest
 ```
 
 The tag scheme: `{TARGET}-{VERSION}`
@@ -44,7 +44,7 @@ docker build --tag ghcr.io/ilyes512/php84:builder-latest --file fpm/Dockerfile -
 Building `builder_nodejs`-target:
 
 ```
-docker build --tag ghcr.io/ilyes512/php84:builder-nodejs-latest --file fpm/Dockerfile --target builder_nodejs .
+docker build --tag ghcr.io/ilyes512/php84:builder_nodejs-latest --file fpm/Dockerfile --target builder_nodejs .
 ```
 
 ## Task commands
