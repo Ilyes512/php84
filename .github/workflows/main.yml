@@ -15,7 +15,7 @@ concurrency:
 
 jobs:
   build:
-    uses: Ilyes512/github-actions/.github/workflows/build-php.yml@0.3.0
+    uses: Ilyes512/github-actions/.github/workflows/build-php.yml@0.4.0
     strategy:
       fail-fast: false
       matrix:
@@ -30,7 +30,7 @@ jobs:
             image-name: ghcr.io/${{ github.repository }}/apache
             key: apache
     with:
-      runner-os: ubuntu-22.04
+      runs-on: ubuntu-24.04
       platform: ${{ matrix.platform }}
       image-name: ${{ matrix.docker.image-name }}
       dockerfile: ${{ matrix.docker.dockerfile }}
@@ -40,7 +40,7 @@ jobs:
         ${{ matrix.os }}-buildx-${{ matrix.platform }}-${{ matrix.docker.key }}
 
   merge:
-    uses: Ilyes512/github-actions/.github/workflows/merge-php.yml@0.3.0
+    uses: Ilyes512/github-actions/.github/workflows/merge-php.yml@0.4.0
     needs: build
     strategy:
       matrix:
@@ -48,5 +48,5 @@ jobs:
           - ghcr.io/${{ github.repository }}
           - ghcr.io/${{ github.repository }}/apache
     with:
-      runner-os: ubuntu-22.04
+      runs-on: ubuntu-24.04
       image-name: ${{ matrix.image-name }}
