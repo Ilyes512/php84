@@ -8,7 +8,7 @@ ARG PHP_EVENT_VERSION=3.1.4
 # Latest version of igbinary-extension: https://pecl.php.net/package/igbinary
 ARG PHP_IGBINARY_VERSION=3.2.16
 # Latest version of redis-extension: https://pecl.php.net/package/redis
-ARG PHP_REDIS_VERSION=6.1.0RC2
+ARG PHP_REDIS_VERSION=6.1.0
 # Latest version of amqp-extension: https://pecl.php.net/package/amqp
 ARG PHP_AMQP_VERSION=2.1.2
 
@@ -126,9 +126,11 @@ ARG UNIQUE_ID_FOR_CACHEFROM=builder
 # Latest version of Phive: https://api.github.com/repos/phar-io/phive/releases/latest
 ARG PHIVE_VERSION=0.15.3
 # Latest version of Composer: https://getcomposer.org/download
-ARG COMPOSER_VERSION=2.8.3
+ARG COMPOSER_VERSION=2.8.4
 # Latest version of Xdebug: https://github.com/xdebug/xdebug/tags or https://pecl.php.net/package/xdebug
-ARG XDEBUG_VERSION=3.4.0beta1
+ARG XDEBUG_VERSION=3.4.0
+# Latest version of pcov: https://github.com/krakjoe/pcov/tags or https://pecl.php.net/package/pcov
+ARG PCOV_VERSION=1.0.12
 
 RUN apt-get update \
     && apt-get install --assume-yes --no-install-recommends \
@@ -154,6 +156,9 @@ RUN apt-get update \
     # Install Xdebug PHP extension
     && pecl install "xdebug-$XDEBUG_VERSION" \
     && docker-php-ext-enable xdebug \
+    # Install pcov PHP extension
+    && pecl install "pcov-$PCOV_VERSION" \
+    && docker-php-ext-enable pcov \
     && cp "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini" \
     # Cleanup
     && apt-get purge --assume-yes $PHPIZE_DEPS \
