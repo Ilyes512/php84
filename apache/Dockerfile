@@ -128,7 +128,7 @@ ARG PHIVE_VERSION=0.15.3
 # Latest version of Composer: https://getcomposer.org/download
 ARG COMPOSER_VERSION=2.8.4
 # Latest version of Xdebug: https://github.com/xdebug/xdebug/tags or https://pecl.php.net/package/xdebug
-ARG XDEBUG_VERSION=3.4.0beta1
+ARG XDEBUG_VERSION=3.4.0
 
 RUN apt-get update \
     && apt-get install --assume-yes --no-install-recommends \
