@@ -15,7 +15,7 @@ concurrency:
 
 jobs:
   build:
-    uses: Ilyes512/github-actions/.github/workflows/build-php.yml@0.4.0
+    uses: Ilyes512/github-actions/.github/workflows/build-php.yml@1.0.2
     strategy:
       fail-fast: false
       matrix:
@@ -40,7 +40,7 @@ jobs:
         ${{ matrix.os }}-buildx-${{ matrix.platform }}-${{ matrix.docker.key }}
 
   merge:
-    uses: Ilyes512/github-actions/.github/workflows/merge-php.yml@0.4.0
+    uses: Ilyes512/github-actions/.github/workflows/merge-php.yml@1.0.2
     needs: build
     strategy:
       matrix:
