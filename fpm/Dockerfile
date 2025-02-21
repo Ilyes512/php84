@@ -1,5 +1,5 @@
 # Latest version of PHP base image: https://hub.docker.com/_/php?tab=tags
-FROM php:8.4.1-fpm-bookworm AS runtime
+FROM php:8.4.4-fpm-bookworm AS runtime
 
 ARG UNIQUE_ID_FOR_CACHEFROM=runtime
 
@@ -19,6 +19,7 @@ WORKDIR /var/www
 
 RUN apt-get update \
     && apt-get install --assume-yes --no-install-recommends \
+        apt-transport-https \
         ca-certificates \
         openssl \
         curl \
@@ -126,9 +127,9 @@ ARG UNIQUE_ID_FOR_CACHEFROM=builder
 # Latest version of Phive: https://api.github.com/repos/phar-io/phive/releases/latest
 ARG PHIVE_VERSION=0.15.3
 # Latest version of Composer: https://getcomposer.org/download
-ARG COMPOSER_VERSION=2.8.4
+ARG COMPOSER_VERSION=2.8.5
 # Latest version of Xdebug: https://github.com/xdebug/xdebug/tags or https://pecl.php.net/package/xdebug
-ARG XDEBUG_VERSION=3.4.0
+ARG XDEBUG_VERSION=3.4.1
 # Latest version of pcov: https://github.com/krakjoe/pcov/tags or https://pecl.php.net/package/pcov
 ARG PCOV_VERSION=1.0.12
 
@@ -169,26 +170,32 @@ RUN apt-get update \
 
 FROM builder AS builder_nodejs
 
+ARG TARGETARCH
+
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 ARG UNIQUE_ID_FOR_CACHEFROM=builder_nodejs
 
 # Latest version of Node.js: https://nodejs.org
-ARG NODE_MAJOR=20
+ARG NODE_MAJOR=22
 
 RUN apt-get update \
     && apt-get install --assume-yes --no-install-recommends \
         gcc \
         g++ \
         make \
-    && mkdir -p /etc/apt/keyrings \
-    && curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg \
-    && echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_$NODE_MAJOR.x nodistro main" | tee /etc/apt/sources.list.d/nodesource.list \
+    && mkdir -p /usr/share/keyrings \
+    && curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /usr/share/keyrings/nodesource.gpg \
+    && chmod 644 /usr/share/keyrings/nodesource.gpg \
+    && echo "deb [arch=$TARGETARCH signed-by=/usr/share/keyrings/nodesource.gpg] https://deb.nodesource.com/node_$NODE_MAJOR.x nodistro main" | tee /etc/apt/sources.list.d/nodesource.list \
+    && echo "Package: nodejs" | tee /etc/apt/preferences.d/nodejs > /dev/null \
+    && echo "Pin: origin deb.nodesource.com" | tee -a /etc/apt/preferences.d/nodejs > /dev/null \
+    && echo "Pin-Priority: 600" | tee -a /etc/apt/preferences.d/nodejs > /dev/null \
     && apt-get update \
     && apt-get install --assume-yes --no-install-recommends \
         nodejs \
     && npm uninstall --global npm \
-    && corepack install --global npm yarn pnpm \
+    && corepack install --global npm@10.x yarn@4.x pnpm@9.x \
     && corepack enable npm yarn pnpm \
     && apt-get autoremove --assume-yes \
     && apt-get clean --assume-yes \
