@@ -8,7 +8,7 @@ ARG PHP_EVENT_VERSION=3.1.4
 # Latest version of igbinary-extension: https://pecl.php.net/package/igbinary
 ARG PHP_IGBINARY_VERSION=3.2.16
 # Latest version of redis-extension: https://pecl.php.net/package/redis
-ARG PHP_REDIS_VERSION=6.1.0
+ARG PHP_REDIS_VERSION=6.2.0
 # Latest version of amqp-extension: https://pecl.php.net/package/amqp
 ARG PHP_AMQP_VERSION=2.1.2
 
