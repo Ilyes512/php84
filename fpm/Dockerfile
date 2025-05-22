@@ -121,6 +121,7 @@ RUN apt-get update \
         libxml2-dev \
         libpq-dev \
         librabbitmq-dev \
+        libxslt1-dev \
         libmemcached-dev \
         zlib1g-dev \
     # Cleanup
