@@ -1,5 +1,5 @@
 # Latest version of PHP base image: https://hub.docker.com/_/php?tab=tags
-FROM php:8.4.11-fpm-bookworm AS runtime
+FROM php:8.4.12-fpm-bookworm AS runtime
 
 ARG UNIQUE_ID_FOR_CACHEFROM=runtime
 
