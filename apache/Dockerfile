@@ -1,5 +1,5 @@
 # Latest version of PHP base image: https://hub.docker.com/_/php?tab=tags
-FROM php:8.4.11-apache-bookworm AS runtime
+FROM php:8.4.14-apache-bookworm AS runtime
 
 ARG UNIQUE_ID_FOR_CACHEFROM=runtime
 
@@ -10,7 +10,7 @@ ARG PHP_IGBINARY_VERSION=3.2.16
 # Latest version of redis-extension: https://pecl.php.net/package/redis
 ARG PHP_REDIS_VERSION=6.2.0
 # Latest version of memcached-extension: https://pecl.php.net/package/memcached
-ARG PHP_MEMCACHED_VERSION=3.3.0
+ARG PHP_MEMCACHED_VERSION=3.4.0
 # Latest version of amqp-extension: https://pecl.php.net/package/amqp
 ARG PHP_AMQP_VERSION=2.1.2
 
@@ -140,9 +140,9 @@ ARG UNIQUE_ID_FOR_CACHEFROM=builder
 # Latest version of Phive: https://api.github.com/repos/phar-io/phive/releases/latest
 ARG PHIVE_VERSION=0.16.0
 # Latest version of Composer: https://getcomposer.org/download
-ARG COMPOSER_VERSION=2.8.10
+ARG COMPOSER_VERSION=2.8.12
 # Latest version of Xdebug: https://github.com/xdebug/xdebug/tags or https://pecl.php.net/package/xdebug
-ARG XDEBUG_VERSION=3.4.5
+ARG XDEBUG_VERSION=3.4.6
 # Latest version of pcov: https://github.com/krakjoe/pcov/tags or https://pecl.php.net/package/pcov
 ARG PCOV_VERSION=1.0.12
 
