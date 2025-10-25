@@ -10,7 +10,7 @@ ARG PHP_IGBINARY_VERSION=3.2.16
 # Latest version of redis-extension: https://pecl.php.net/package/redis
 ARG PHP_REDIS_VERSION=6.2.0
 # Latest version of memcached-extension: https://pecl.php.net/package/memcached
-ARG PHP_MEMCACHED_VERSION=3.3.0
+ARG PHP_MEMCACHED_VERSION=3.4.0
 # Latest version of amqp-extension: https://pecl.php.net/package/amqp
 ARG PHP_AMQP_VERSION=2.1.2
 
