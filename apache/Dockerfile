@@ -1,5 +1,5 @@
 # Latest version of PHP base image: https://hub.docker.com/_/php/tags
-FROM php:8.4.16-apache-bookworm AS runtime
+FROM php:8.4.16-apache-trixie AS runtime
 
 ARG UNIQUE_ID_FOR_CACHEFROM=runtime
 
@@ -27,18 +27,18 @@ RUN apt-get update \
         curl \
         msmtp-mta \
         # Dependency of the PHP intl-extension
-        libicu72 \
+        libicu76 \
         # Dependency of the PHP gd-extension
-        libpng16-16 \
+        libpng16-16t64 \
         libwebp7 \
         libjpeg62-turbo \
         libfreetype6 \
         # Dependency of PHP zip-extension
-        libzip4 \
+        libzip5 \
         # Dependency of PHP event-extension
-        libevent-2.1-7 \
-        libevent-openssl-2.1-7 \
-        libevent-extra-2.1-7 \
+        libevent-2.1-7t64 \
+        libevent-openssl-2.1-7t64 \
+        libevent-extra-2.1-7t64 \
         # Dependency of PHP pdo_pgsql-extension
         libpq5 \
         # Dependency of PHP amqp-extension
@@ -46,7 +46,7 @@ RUN apt-get update \
         # Dependency of PHP xsl-extension
         libxslt1.1 \
         # Dependency of PHP memcached-extension
-        libmemcached11 \
+        libmemcached11t64 \
         zlib1g \
     # Install packages that are needed for building PHP extensions
     && apt-get install --assume-yes --no-install-recommends \
