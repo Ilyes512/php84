@@ -35,7 +35,7 @@ jobs:
       dockerfile: ${{ matrix.docker.dockerfile }}
 
   merge:
-    uses: Ilyes512/github-actions/.github/workflows/merge-php.yml@1.0.5
+    uses: Ilyes512/github-actions/.github/workflows/merge-php.yml@1.0.8
     needs: build
     strategy:
       matrix:
