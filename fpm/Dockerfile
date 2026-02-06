@@ -1,5 +1,5 @@
 # Latest version of PHP base image: https://hub.docker.com/_/php/tags
-FROM php:8.4.16-fpm-trixie AS runtime
+FROM php:8.4.17-fpm-trixie AS runtime
 
 ARG UNIQUE_ID_FOR_CACHEFROM=runtime
 
@@ -12,7 +12,7 @@ ARG PHP_REDIS_VERSION=6.3.0
 # Latest version of memcached-extension: https://pecl.php.net/package/memcached
 ARG PHP_MEMCACHED_VERSION=3.4.0
 # Latest version of amqp-extension: https://pecl.php.net/package/amqp
-ARG PHP_AMQP_VERSION=2.1.2
+ARG PHP_AMQP_VERSION=2.2.0
 
 ENV SMTPHOST=mail
 ENV SMTPEHLO=localhost
@@ -140,7 +140,7 @@ ARG UNIQUE_ID_FOR_CACHEFROM=builder
 # Latest version of Phive: https://api.github.com/repos/phar-io/phive/releases/latest
 ARG PHIVE_VERSION=0.16.0
 # Latest version of Composer: https://getcomposer.org/download
-ARG COMPOSER_VERSION=2.9.2
+ARG COMPOSER_VERSION=2.9.5
 # Latest version of Xdebug: https://github.com/xdebug/xdebug/tags or https://pecl.php.net/package/xdebug
 ARG XDEBUG_VERSION=3.5.0
 # Latest version of pcov: https://github.com/krakjoe/pcov/tags or https://pecl.php.net/package/pcov
