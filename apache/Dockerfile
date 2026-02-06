@@ -12,7 +12,7 @@ ARG PHP_REDIS_VERSION=6.3.0
 # Latest version of memcached-extension: https://pecl.php.net/package/memcached
 ARG PHP_MEMCACHED_VERSION=3.4.0
 # Latest version of amqp-extension: https://pecl.php.net/package/amqp
-ARG PHP_AMQP_VERSION=2.1.2
+ARG PHP_AMQP_VERSION=2.2.0
 
 ENV SMTPHOST=mail
 ENV SMTPEHLO=localhost
