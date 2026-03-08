@@ -14,10 +14,11 @@ silent: true
 tasks:
 
   build:
-    desc: Build all PHP Docker image targets of both the FPM and Apache variants
+    desc: Build all PHP Docker image targets of the FPM, Apache and FrankenPHP variants
     cmds:
       - task: build:fpm
       - task: build:apache
+      - task: build:frankenphp
 
   build:fpm:
     desc: Build all PHP Docker image targets of the FPM variant
@@ -65,6 +66,29 @@ tasks:
           DOCKER_IMAGE_NAME: '{{.DOCKER_IMAGE_NAME}}'
           DOCKER_FILE_PATH: '{{.DOCKER_FILE_PATH}}'
 
+  build:frankenphp:
+    desc: Build all PHP Docker image targets of the FrankenPHP variant
+    deps: [lint:frankenphp]
+    vars:
+      DOCKER_IMAGE_NAME: php84/frankenphp
+      DOCKER_FILE_PATH: ./frankenphp/Dockerfile
+    cmds:
+      - task: build:target
+        vars:
+          TARGET: runtime
+          DOCKER_IMAGE_NAME: '{{.DOCKER_IMAGE_NAME}}'
+          DOCKER_FILE_PATH: '{{.DOCKER_FILE_PATH}}'
+      - task: build:target
+        vars:
+          TARGET: builder
+          DOCKER_IMAGE_NAME: '{{.DOCKER_IMAGE_NAME}}'
+          DOCKER_FILE_PATH: '{{.DOCKER_FILE_PATH}}'
+      - task: build:target
+        vars:
+          TARGET: builder_nodejs
+          DOCKER_IMAGE_NAME: '{{.DOCKER_IMAGE_NAME}}'
+          DOCKER_FILE_PATH: '{{.DOCKER_FILE_PATH}}'
+
   build:target:
     preconditions:
       - sh: >
@@ -94,6 +118,12 @@ tasks:
     cmds:
       - task: lint
         vars: { DOCKERFILE_PATH: apache/Dockerfile }
+
+  lint:frankenphp:
+    desc: Apply a Dockerfile linter (https://github.com/hadolint/hadolint)
+    cmds:
+      - task: lint
+        vars: { DOCKERFILE_PATH: frankenphp/Dockerfile }
 
   lint:
     cmds:
@@ -126,6 +156,19 @@ tasks:
     interactive: true
     vars:
       DOCKER_IMAGE_NAME: php84/apache
+    cmds:
+      - docker run
+        --interactive
+        --tty
+        --rm
+        {{.DOCKER_REPO}}/{{.DOCKER_OWNER}}/{{.DOCKER_IMAGE_NAME}}:builder_nodejs-{{.VERSION | default "latest" }}
+        bash
+
+  shell:frankenphp:
+    desc: Interactive shell
+    interactive: true
+    vars:
+      DOCKER_IMAGE_NAME: php84/frankenphp
     cmds:
       - docker run
         --interactive
