@@ -1,23 +1,33 @@
 # Latest version of PHP base image: https://hub.docker.com/_/php/tags
 FROM php:8.4.18-apache-trixie AS runtime
 
-ARG UNIQUE_ID_FOR_CACHEFROM=runtime
+ARG XDG_CONFIG_HOME=/config
+ENV XDG_CONFIG_HOME=$XDG_CONFIG_HOME
 
-# Latest version of event-extension: https://pecl.php.net/package/event
-ARG PHP_EVENT_VERSION=3.1.4
-# Latest version of igbinary-extension: https://pecl.php.net/package/igbinary
-ARG PHP_IGBINARY_VERSION=3.2.16
-# Latest version of redis-extension: https://pecl.php.net/package/redis
+ARG XDG_DATA_HOME=/data
+ENV XDG_DATA_HOME=$XDG_DATA_HOME
+
+ARG XDG_CACHE_HOME=/cache
+ENV XDG_CACHE_HOME=$XDG_CACHE_HOME
+
+# Latest version of event-extension: https://packagist.org/packages/osmanov/pecl-event
+ARG PHP_EVENT_VERSION=3.1.5
+# Latest version of igbinary-extension: https://packagist.org/packages/igbinary/igbinary
+ARG PHP_IGBINARY_VERSION=3.2.17RC1
+# Latest version of redis-extension: https://packagist.org/packages/phpredis/phpredis
 ARG PHP_REDIS_VERSION=6.3.0
 # Latest version of memcached-extension: https://pecl.php.net/package/memcached
 ARG PHP_MEMCACHED_VERSION=3.4.0
-# Latest version of amqp-extension: https://pecl.php.net/package/amqp
+# Latest version of amqp-extension: https://packagist.org/packages/php-amqp/php-amqp
 ARG PHP_AMQP_VERSION=2.2.0
 
 ENV SMTPHOST=mail
 ENV SMTPEHLO=localhost
 
 WORKDIR /var/www
+
+# Latest version of Pie: https://github.com/php/pie/releases
+COPY --from=ghcr.io/php/pie:1.3.8-bin /pie /usr/bin/pie
 
 RUN apt-get update \
     && apt-get install --assume-yes --no-install-recommends \
@@ -26,6 +36,7 @@ RUN apt-get update \
         openssl \
         curl \
         msmtp-mta \
+        unzip \
         # Dependency of the PHP intl-extension
         libicu76 \
         # Dependency of the PHP gd-extension
@@ -94,12 +105,11 @@ RUN apt-get update \
         xsl \
         # Dependency of PHP event-extension
         sockets \
-    && pecl install "event-$PHP_EVENT_VERSION" \
-    # Optional dependency of PHP redis-extension
-    && pecl install "igbinary-$PHP_IGBINARY_VERSION" \
-    && pecl install --configureoptions 'enable-redis-igbinary="yes"' "redis-$PHP_REDIS_VERSION" \
+    && pie install --skip-enable-extension osmanov/pecl-event:$PHP_EVENT_VERSION \
+    && pie install --skip-enable-extension igbinary/igbinary:$PHP_IGBINARY_VERSION \
+    && pie install --skip-enable-extension php-amqp/php-amqp:$PHP_AMQP_VERSION \
+    && pie install --skip-enable-extension phpredis/phpredis:$PHP_REDIS_VERSION --enable-redis-igbinary \
     && pecl install --configureoptions 'enable-memcached-igbinary="yes"' "memcached-$PHP_MEMCACHED_VERSION" \
-    && pecl install "amqp-$PHP_AMQP_VERSION" \
     && docker-php-ext-enable --ini-name docker-php-ext-zz-custom.ini \
         event \
         igbinary \
@@ -124,8 +134,12 @@ RUN apt-get update \
         libxslt1-dev \
         libmemcached-dev \
         zlib1g-dev \
-    # Cleanup
+    && mkdir -p \
+        $XDG_CONFIG_HOME \
+        $XDG_DATA_HOME \
+        $XDG_CACHE_HOME \
     && rm -rf /var/www/* \
+    # Cleanup
     && apt-get autoremove --assume-yes \
     && apt-get clean --assume-yes \
     && rm -rf /var/lib/apt/lists/* \
@@ -135,15 +149,13 @@ COPY files /
 
 FROM runtime AS builder
 
-ARG UNIQUE_ID_FOR_CACHEFROM=builder
-
 # Latest version of Phive: https://api.github.com/repos/phar-io/phive/releases/latest
 ARG PHIVE_VERSION=0.16.0
 # Latest version of Composer: https://getcomposer.org/download
 ARG COMPOSER_VERSION=2.9.5
-# Latest version of Xdebug: https://github.com/xdebug/xdebug/tags or https://pecl.php.net/package/xdebug
-ARG XDEBUG_VERSION=3.5.0
-# Latest version of pcov: https://github.com/krakjoe/pcov/tags or https://pecl.php.net/package/pcov
+# Latest version of Xdebug: https://packagist.org/packages/xdebug/xdebug
+ARG XDEBUG_VERSION=3.5.1
+# Latest version of pcov: https://packagist.org/packages/pecl/pcov
 ARG PCOV_VERSION=1.0.12
 
 RUN apt-get update \
@@ -152,9 +164,9 @@ RUN apt-get update \
         $PHPIZE_DEPS \
         vim \
         git \
-        unzip \
         sqlite3 \
         wait-for-it \
+        p7zip-full \
         # Needed for phive:
         gnupg \
     # Install Phive
@@ -167,12 +179,14 @@ RUN apt-get update \
     # Install Composer using Phive
     && phive install --global composer:$COMPOSER_VERSION --trust-gpg-keys CBB3D576F2A0946F \
     && rm -rf /root/.phive \
-    # Install Xdebug PHP extension
-    && pecl install "xdebug-$XDEBUG_VERSION" \
-    && docker-php-ext-enable xdebug \
-    # Install pcov PHP extension
-    && pecl install "pcov-$PCOV_VERSION" \
-    && docker-php-ext-enable pcov \
+    # Download Composer keys
+    && mkdir -p "$XDG_CONFIG_HOME/composer" \
+    && curl -fsSLo "$XDG_CONFIG_HOME/composer/keys.dev.pub" https://composer.github.io/snapshots.pub \
+    && curl -fsSLo "$XDG_CONFIG_HOME/composer/keys.tags.pub" https://composer.github.io/releases.pub \
+    && chmod 644 "$XDG_CONFIG_HOME/composer/keys.dev.pub" "$XDG_CONFIG_HOME/composer/keys.tags.pub" \
+    # Install Xdebug and pcov PHP extensions
+    && pie install xdebug/xdebug:$XDEBUG_VERSION \
+    && pie install pecl/pcov:$PCOV_VERSION \
     && cp "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini" \
     # Cleanup
     && apt-get purge --assume-yes $PHPIZE_DEPS \
@@ -186,8 +200,6 @@ FROM builder AS builder_nodejs
 ARG TARGETARCH
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
-
-ARG UNIQUE_ID_FOR_CACHEFROM=builder_nodejs
 
 # Latest version of Node.js: https://nodejs.org
 ARG NODE_MAJOR=24
@@ -210,6 +222,7 @@ RUN apt-get update \
     && npm uninstall --global npm \
     && corepack install --global npm@11.x yarn@4.x pnpm@10.x \
     && corepack enable npm yarn pnpm \
+    # Cleanup
     && apt-get autoremove --assume-yes \
     && apt-get clean --assume-yes \
     && rm -rf /var/lib/apt/lists/* \

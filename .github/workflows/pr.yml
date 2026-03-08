@@ -28,6 +28,8 @@ jobs:
             image-name: ghcr.io/${{ github.repository }}
           - dockerfile: apache/Dockerfile
             image-name: ghcr.io/${{ github.repository }}/apache
+          - dockerfile: frankenphp/Dockerfile
+            image-name: ghcr.io/${{ github.repository }}/frankenphp
     with:
       runs-on: ${{ matrix.runs-on.os }}
       platform: ${{ matrix.runs-on.platform }}
@@ -42,6 +44,7 @@ jobs:
         image-name:
           - ghcr.io/${{ github.repository }}
           - ghcr.io/${{ github.repository }}/apache
+          - ghcr.io/${{ github.repository }}/frankenphp
     with:
       runs-on: ubuntu-24.04
       image-name: ${{ matrix.image-name }}

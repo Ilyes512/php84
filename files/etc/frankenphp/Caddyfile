@@ -1,0 +1,41 @@
+# FrankenPHP Caddyfile
+# Documentation: https://frankenphp.dev/docs/config/
+#
+# Environment variables:
+# - SERVER_NAME: Change the addresses to listen on (default: localhost)
+# - SERVER_ROOT: Change the root directory (default: public/)
+# - CADDY_GLOBAL_OPTIONS: Inject global options (e.g., "debug" for debug mode)
+# - FRANKENPHP_CONFIG: Inject FrankenPHP config (e.g., "worker /var/www/public/index.php" for worker mode)
+# - CADDY_SERVER_EXTRA_DIRECTIVES: Inject additional server-level directives
+#
+# Classic mode (default): No additional configuration needed
+# Worker mode: Set FRANKENPHP_CONFIG="worker /var/www/public/index.php"
+
+{
+	{$CADDY_GLOBAL_OPTIONS}
+
+	frankenphp {
+		{$FRANKENPHP_CONFIG}
+	}
+}
+
+{$SERVER_NAME:localhost} {
+	# Access logging (JSON format, outputs to stdout)
+	log {
+		format json
+	}
+
+	root * {$SERVER_ROOT:/var/www/public}
+
+	# Enable compression
+	encode zstd br gzip
+
+	# Execute PHP files and serve assets
+	php_server
+
+	# Extra directives
+	{$CADDY_SERVER_EXTRA_DIRECTIVES}
+}
+
+# Import custom Caddyfile fragments
+import Caddyfile.d/*.caddyfile

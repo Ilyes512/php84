@@ -2,7 +2,7 @@
 
 [![Build Images](https://github.com/Ilyes512/php84/actions/workflows/main.yml/badge.svg)](https://github.com/Ilyes512/php84/actions/workflows/main.yml)
 
-A PHP 8.4 (FPM and Apache) based Docker base image.
+A PHP 8.4 (FPM, Apache and FrankenPHP) based Docker base image.
 
 ## Pulling the images
 
@@ -14,6 +14,10 @@ docker pull ghcr.io/ilyes512/php84:builder_nodejs-latest
 docker pull ghcr.io/ilyes512/php84/apache:runtime-latest
 docker pull ghcr.io/ilyes512/php84/apache:builder-latest
 docker pull ghcr.io/ilyes512/php84/apache:builder_nodejs-latest
+
+docker pull ghcr.io/ilyes512/php84/frankenphp:runtime-latest
+docker pull ghcr.io/ilyes512/php84/frankenphp:builder-latest
+docker pull ghcr.io/ilyes512/php84/frankenphp:builder_nodejs-latest
 ```
 
 The tag scheme: `{TARGET}-{VERSION}`
@@ -52,11 +56,14 @@ docker build --tag ghcr.io/ilyes512/php84:builder_nodejs-latest --file fpm/Docke
 Available [Task](https://taskfile.dev/#/) commands:
 
 ```
-* build:              Build all PHP Docker image targets of both the FPM and Apache variants
+* build:              Build all PHP Docker image targets of the FPM, Apache and FrankenPHP variants
 * build:apache:       Build all PHP Docker image targets of the Apache variant
 * build:fpm:          Build all PHP Docker image targets of the FPM variant
+* build:frankenphp:   Build all PHP Docker image targets of the FrankenPHP variant
 * lint:apache:        Apply a Dockerfile linter (https://github.com/hadolint/hadolint)
 * lint:fpm:           Apply a Dockerfile linter (https://github.com/hadolint/hadolint)
+* lint:frankenphp:    Apply a Dockerfile linter (https://github.com/hadolint/hadolint)
 * shell:apache:       Interactive shell
 * shell:fpm:          Interactive shell
+* shell:frankenphp:   Interactive shell
 ```
