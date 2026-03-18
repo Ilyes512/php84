@@ -1,5 +1,5 @@
 # Latest version of FrankenPHP base image: https://hub.docker.com/r/dunglas/frankenphp/tags
-FROM dunglas/frankenphp:1.11.3-php8.4.18-trixie AS runtime
+FROM dunglas/frankenphp:1.12.1-php8.4-trixie AS runtime
 
 ARG XDG_CONFIG_HOME=/config
 ENV XDG_CONFIG_HOME=$XDG_CONFIG_HOME
