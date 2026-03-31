@@ -1,3 +1,6 @@
+# syntax=docker/dockerfile:1
+# check=error=true
+
 # Latest version of PHP base image: https://hub.docker.com/_/php/tags
 FROM php:8.4.19-fpm-trixie AS runtime
 

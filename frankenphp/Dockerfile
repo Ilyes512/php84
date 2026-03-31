@@ -1,3 +1,6 @@
+# syntax=docker/dockerfile:1
+# check=error=true
+
 # Latest version of FrankenPHP base image: https://hub.docker.com/r/dunglas/frankenphp/tags
 FROM dunglas/frankenphp:1.12.1-php8.4-trixie AS runtime
 
