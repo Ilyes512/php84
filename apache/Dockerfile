@@ -19,8 +19,6 @@ ARG PHP_EVENT_VERSION=3.1.5
 ARG PHP_IGBINARY_VERSION=3.2.17RC1
 # Latest version of redis-extension: https://packagist.org/packages/phpredis/phpredis
 ARG PHP_REDIS_VERSION=6.3.0
-# Latest version of memcached-extension: https://pecl.php.net/package/memcached
-ARG PHP_MEMCACHED_VERSION=3.4.0
 # Latest version of amqp-extension: https://packagist.org/packages/php-amqp/php-amqp
 ARG PHP_AMQP_VERSION=2.2.0
 
@@ -59,9 +57,6 @@ RUN apt-get update \
         librabbitmq4 \
         # Dependency of PHP xsl-extension
         libxslt1.1 \
-        # Dependency of PHP memcached-extension
-        libmemcached11t64 \
-        zlib1g \
     # Install packages that are needed for building PHP extensions
     && apt-get install --assume-yes --no-install-recommends \
         $PHPIZE_DEPS \
@@ -85,9 +80,6 @@ RUN apt-get update \
         librabbitmq-dev \
         # Dependency of PHP xsl-extension
         libxslt1-dev \
-        # Dependency of PHP memcached-extension
-        libmemcached-dev \
-        zlib1g-dev \
     # Configure PHP gd-extension
     && docker-php-ext-configure gd \
         --enable-gd \
@@ -112,12 +104,10 @@ RUN apt-get update \
     && pie install --skip-enable-extension igbinary/igbinary:$PHP_IGBINARY_VERSION \
     && pie install --skip-enable-extension php-amqp/php-amqp:$PHP_AMQP_VERSION \
     && pie install --skip-enable-extension phpredis/phpredis:$PHP_REDIS_VERSION --enable-redis-igbinary \
-    && pecl install --configureoptions 'enable-memcached-igbinary="yes"' "memcached-$PHP_MEMCACHED_VERSION" \
     && docker-php-ext-enable --ini-name docker-php-ext-zz-custom.ini \
         event \
         igbinary \
         redis \
-        memcached \
         amqp \
     && cp "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini" \
     # Purge packages that where only needed for building php extensions
@@ -135,8 +125,6 @@ RUN apt-get update \
         libpq-dev \
         librabbitmq-dev \
         libxslt1-dev \
-        libmemcached-dev \
-        zlib1g-dev \
     && mkdir -p \
         $XDG_CONFIG_HOME \
         $XDG_DATA_HOME \
