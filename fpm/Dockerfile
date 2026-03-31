@@ -30,7 +30,7 @@ ENV SMTPEHLO=localhost
 WORKDIR /var/www
 
 # Latest version of Pie: https://github.com/php/pie/releases
-COPY --from=ghcr.io/php/pie:1.3.9-bin /pie /usr/bin/pie
+COPY --from=ghcr.io/php/pie:1.3.10-bin /pie /usr/bin/pie
 
 RUN apt-get update \
     && apt-get install --assume-yes --no-install-recommends \
