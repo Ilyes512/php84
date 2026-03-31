@@ -1,3 +1,6 @@
+# syntax=docker/dockerfile:1
+# check=error=true
+
 # Latest version of FrankenPHP base image: https://hub.docker.com/r/dunglas/frankenphp/tags
 FROM dunglas/frankenphp:1.12.1-php8.4-trixie AS runtime
 
@@ -29,7 +32,7 @@ ENV FRANKENPHP_CONFIG=""
 WORKDIR /var/www
 
 # Latest version of Pie: https://github.com/php/pie/releases
-COPY --from=ghcr.io/php/pie:1.3.9-bin /pie /usr/bin/pie
+COPY --from=ghcr.io/php/pie:1.3.10-bin /pie /usr/bin/pie
 
 RUN apt-get update \
     && apt-get install --assume-yes --no-install-recommends \

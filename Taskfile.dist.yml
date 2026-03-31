@@ -20,6 +20,13 @@ tasks:
       - task: build:apache
       - task: build:frankenphp
 
+  lint:
+    desc: Apply a Dockerfile linter to all Dockerfiles
+    cmds:
+      - task: lint:fpm
+      - task: lint:apache
+      - task: lint:frankenphp
+
   build:fpm:
     desc: Build all PHP Docker image targets of the FPM variant
     deps: [lint:fpm]
@@ -110,22 +117,23 @@ tasks:
   lint:fpm:
     desc: Apply a Dockerfile linter (https://github.com/hadolint/hadolint)
     cmds:
-      - task: lint
+      - task: do:lint
         vars: { DOCKERFILE_PATH: fpm/Dockerfile }
 
   lint:apache:
     desc: Apply a Dockerfile linter (https://github.com/hadolint/hadolint)
     cmds:
-      - task: lint
+      - task: do:lint
         vars: { DOCKERFILE_PATH: apache/Dockerfile }
 
   lint:frankenphp:
     desc: Apply a Dockerfile linter (https://github.com/hadolint/hadolint)
     cmds:
-      - task: lint
+      - task: do:lint
         vars: { DOCKERFILE_PATH: frankenphp/Dockerfile }
 
-  lint:
+  do:lint:
+    internal: true
     cmds:
       - docker run
         --interactive
