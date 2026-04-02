@@ -190,6 +190,50 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/* \
     && rm -rf /tmp/*
 
+# Latest version of fixuid: https://github.com/boxboat/fixuid/releases/latest
+ARG FIXUID_VERSION=0.6.0
+
+ARG USER=code
+ARG GROUP=code
+ARG USER_UID=1000
+ARG USER_GID=1000
+ARG TARGETARCH
+
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
+
+RUN curl -fsSLo /tmp/fixuid.tar.gz "https://github.com/boxboat/fixuid/releases/download/v$FIXUID_VERSION/fixuid-${FIXUID_VERSION}-linux-${TARGETARCH}.tar.gz" \
+    && tar -xf /tmp/fixuid.tar.gz -C /usr/local/bin fixuid \
+    && chown root:root /usr/local/bin/fixuid \
+    && chmod 4755 /usr/local/bin/fixuid \
+    && rm /tmp/fixuid.tar.gz \
+    # Create user and group, and setup fixuid configuration
+    && existing_group="$(getent group "$USER_GID" | cut -d: -f1 || true)" \
+    && if [ -z "$existing_group" ]; then \
+           groupadd --gid "$USER_GID" "$GROUP"; \
+           existing_group="$GROUP"; \
+       fi \
+    && useradd --uid "$USER_UID" --gid "$USER_GID" --create-home "$USER" --shell /bin/bash \
+    && mkdir -p \
+        /etc/fixuid \
+        "/data" \
+        "/config" \
+        "/cache" \
+    && chown -R "$USER_UID":"$USER_GID" \
+        "/data" \
+        "/config" \
+        "/cache" \
+    && cat <<EOF > /etc/fixuid/config.yml
+user: $USER
+group: $existing_group
+paths:
+  - /var/www
+  - /home/$USER
+  - /data
+  - /config
+  - /cache
+
+EOF
+
 FROM builder AS builder_nodejs
 
 ARG TARGETARCH

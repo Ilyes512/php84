@@ -100,6 +100,7 @@ All three Dockerfiles share the same versions for the following builder-stage to
 `composer/composer`
 - `XDEBUG_VERSION` — `xdebug/xdebug` on Packagist
 - `PCOV_VERSION` — `pecl/pcov` on Packagist
+- `FIXUID_VERSION` — check the GitHub Releases API for `boxboat/fixuid`
 
 Process each tool individually and in order:
 
