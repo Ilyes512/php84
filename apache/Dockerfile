@@ -4,6 +4,8 @@
 # Latest version of PHP base image: https://hub.docker.com/_/php/tags
 FROM php:8.4.19-apache-trixie AS runtime
 
+ARG DEBIAN_FRONTEND=noninteractive
+
 ARG XDG_CONFIG_HOME=/config
 ENV XDG_CONFIG_HOME=$XDG_CONFIG_HOME
 
@@ -28,7 +30,7 @@ ENV SMTPEHLO=localhost
 WORKDIR /var/www
 
 # Latest version of Pie: https://github.com/php/pie/releases
-COPY --from=ghcr.io/php/pie:1.3.10-bin /pie /usr/bin/pie
+COPY --from=ghcr.io/php/pie:1.4.0-bin /pie /usr/bin/pie
 
 RUN apt-get update \
     && apt-get install --assume-yes --no-install-recommends \
@@ -140,6 +142,9 @@ COPY files /
 
 FROM runtime AS builder
 
+ARG TARGETARCH
+ARG DEBIAN_FRONTEND=noninteractive
+
 # Latest version of Phive: https://api.github.com/repos/phar-io/phive/releases/latest
 ARG PHIVE_VERSION=0.16.0
 # Latest version of Composer: https://getcomposer.org/download
@@ -233,6 +238,9 @@ EOF
 FROM builder AS builder_nodejs
 
 ARG TARGETARCH
+ARG DEBIAN_FRONTEND=noninteractive
+
+ENV COREPACK_ENABLE_DOWNLOAD_PROMPT=0
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
