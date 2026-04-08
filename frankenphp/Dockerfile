@@ -4,6 +4,8 @@
 # Latest version of FrankenPHP base image: https://hub.docker.com/r/dunglas/frankenphp/tags
 FROM dunglas/frankenphp:1.12.1-php8.4-trixie AS runtime
 
+ARG DEBIAN_FRONTEND=noninteractive
+
 ARG XDG_CONFIG_HOME=/config
 ENV XDG_CONFIG_HOME=$XDG_CONFIG_HOME
 
@@ -144,6 +146,9 @@ COPY files /
 
 FROM runtime AS builder
 
+ARG TARGETARCH
+ARG DEBIAN_FRONTEND=noninteractive
+
 # Latest version of Phive: https://api.github.com/repos/phar-io/phive/releases/latest
 ARG PHIVE_VERSION=0.16.0
 # Latest version of Composer: https://getcomposer.org/download
@@ -237,6 +242,7 @@ EOF
 FROM builder AS builder_nodejs
 
 ARG TARGETARCH
+ARG DEBIAN_FRONTEND=noninteractive
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
