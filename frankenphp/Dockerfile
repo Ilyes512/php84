@@ -244,6 +244,8 @@ FROM builder AS builder_nodejs
 ARG TARGETARCH
 ARG DEBIAN_FRONTEND=noninteractive
 
+ENV COREPACK_ENABLE_DOWNLOAD_PROMPT=0
+
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 # Latest version of Node.js: https://nodejs.org
