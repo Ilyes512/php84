@@ -1,0 +1,15 @@
+{
+  "knownMarketplaces": [
+    {
+      "name": "specs",
+      "source": {
+        "type": "github",
+        "owner": "specsnl",
+        "repo": "agent-specs"
+      }
+    }
+  ],
+  "enabledPlugins": [
+    "docker@specs"
+  ]
+}
