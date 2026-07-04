@@ -149,7 +149,7 @@ tasks:
     internal: true
     vars:
       BASE_IMAGE:
-        sh: awk '/^FROM / && !found { print $2; found=1 }' {{.VARIANT}}/Dockerfile
+        sh: awk '/^FROM .* AS runtime$/ { print $2; exit }' {{.VARIANT}}/Dockerfile
     cmds:
       - docker run
         --rm

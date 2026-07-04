@@ -1,6 +1,9 @@
 # syntax=docker/dockerfile:1
 # check=error=true
 
+# Latest version of php-extension-installer: https://hub.docker.com/r/mlocati/php-extension-installer/tags
+FROM mlocati/php-extension-installer:2.11.9 AS php_extension_installer
+
 # Latest version of PHP base image: https://hub.docker.com/_/php/tags
 FROM php:8.4.22-apache-trixie AS runtime
 
@@ -26,7 +29,7 @@ ARG PHP_AMQP_VERSION=2.2.0
 
 WORKDIR /var/www
 
-RUN --mount=type=bind,from=mlocati/php-extension-installer:2.11.9,source=/usr/bin/install-php-extensions,target=/usr/local/bin/install-php-extensions \
+RUN --mount=type=bind,from=php_extension_installer,source=/usr/bin/install-php-extensions,target=/usr/local/bin/install-php-extensions \
     apt-get update \
     && apt-get install --assume-yes --no-install-recommends \
         apt-transport-https \
@@ -73,7 +76,7 @@ ARG XDEBUG_VERSION=3.5.3
 # Latest version of pcov: https://packagist.org/packages/pecl/pcov
 ARG PCOV_VERSION=1.0.12
 
-RUN --mount=type=bind,from=mlocati/php-extension-installer:2.11.9,source=/usr/bin/install-php-extensions,target=/usr/local/bin/install-php-extensions \
+RUN --mount=type=bind,from=php_extension_installer,source=/usr/bin/install-php-extensions,target=/usr/local/bin/install-php-extensions \
     apt-get update \
     && apt-get install --assume-yes --no-install-recommends \
         vim \
