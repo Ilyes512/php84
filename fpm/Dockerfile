@@ -5,7 +5,7 @@
 FROM mlocati/php-extension-installer:2.11.12 AS php_extension_installer
 
 # Latest version of PHP base image: https://hub.docker.com/_/php/tags
-FROM php:8.4.22-fpm-trixie AS runtime
+FROM php:8.4.23-fpm-trixie AS runtime
 
 ARG DEBIAN_FRONTEND=noninteractive
 
