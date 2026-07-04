@@ -66,7 +66,7 @@ RUN --mount=type=bind,from=mlocati/php-extension-installer:2.11.9,source=/usr/bi
 COPY files/general /
 COPY files/frankenphp /
 
-FROM composer:2.10.1 AS composer
+FROM composer/composer:2.10.2-bin AS composer
 
 FROM runtime AS builder
 
@@ -148,7 +148,7 @@ paths:
 
 EOF
 
-COPY --from=composer /usr/bin/composer /usr/bin/composer
+COPY --from=composer /composer /usr/bin/composer
 
 FROM node:24.16.0-trixie-slim AS node
 

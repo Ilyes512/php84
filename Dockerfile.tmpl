@@ -67,7 +67,7 @@ COPY files/general /
 {{ if .is_frankenphp -}}
 COPY files/frankenphp /
 {{ end }}
-FROM composer:2.10.1 AS composer
+FROM composer/composer:2.10.2-bin AS composer
 
 FROM runtime AS builder
 
@@ -149,7 +149,7 @@ paths:
 
 EOF
 
-COPY --from=composer /usr/bin/composer /usr/bin/composer
+COPY --from=composer /composer /usr/bin/composer
 
 FROM node:24.16.0-trixie-slim AS node
 
