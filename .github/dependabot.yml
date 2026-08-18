@@ -12,10 +12,25 @@ updates:
       interval: "daily"
     ignore:
       - dependency-name: "*"
-        update-types: ["version-update:semver-major", "version-update:semver-minor"]
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "php"
+        update-types: ["version-update:semver-minor"]
     groups:
       php:
-        group-by: dependency-name
+        patterns:
+          - "php"
+      frankenphp:
+        patterns:
+          - "dunglas/frankenphp"
+      php-extension-installer:
+        patterns:
+          - "mlocati/php-extension-installer"
+      composer:
+        patterns:
+          - "composer/composer"
+      node:
+        patterns:
+          - "node"
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
