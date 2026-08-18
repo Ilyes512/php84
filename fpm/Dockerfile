@@ -148,6 +148,7 @@ EOF
 
 COPY --from=composer /composer /usr/bin/composer
 
+# Latest version of node: https://hub.docker.com/_/node/tags
 FROM node:24.16.0-trixie-slim AS node
 
 FROM builder AS builder_nodejs
