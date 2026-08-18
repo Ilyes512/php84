@@ -15,8 +15,7 @@ updates:
         update-types: ["version-update:semver-major", "version-update:semver-minor"]
     groups:
       php:
-        patterns:
-          - "*"
+        group-by: dependency-name
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
