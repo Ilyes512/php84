@@ -2,7 +2,7 @@
 # check=error=true
 
 # Latest version of php-extension-installer: https://hub.docker.com/r/mlocati/php-extension-installer/tags
-FROM mlocati/php-extension-installer:2.11.12 AS php_extension_installer
+FROM {{ getenv "PHP_EXTENSION_INSTALLER_IMAGE" }} AS php_extension_installer
 
 # Latest version of {{ .image_label }}: {{ .image_url }}
 FROM {{ getenv "BASE_IMAGE" }} AS runtime
@@ -70,7 +70,7 @@ COPY files/general /
 {{ if .is_frankenphp -}}
 COPY files/frankenphp /
 {{ end }}
-FROM composer/composer:2.10.2-bin AS composer
+FROM {{ getenv "COMPOSER_IMAGE" }} AS composer
 
 FROM runtime AS builder
 
@@ -154,7 +154,7 @@ EOF
 
 COPY --from=composer /composer /usr/bin/composer
 
-FROM node:24.16.0-trixie-slim AS node
+FROM {{ getenv "NODE_IMAGE" }} AS node
 
 FROM builder AS builder_nodejs
 
