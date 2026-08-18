@@ -150,12 +150,21 @@ tasks:
     vars:
       BASE_IMAGE:
         sh: awk '/^FROM .* AS runtime$/ { print $2; exit }' {{.VARIANT}}/Dockerfile
+      PHP_EXTENSION_INSTALLER_IMAGE:
+        sh: awk '/^FROM .* AS php_extension_installer$/ { print $2; exit }' {{.VARIANT}}/Dockerfile
+      COMPOSER_IMAGE:
+        sh: awk '/^FROM .* AS composer$/ { print $2; exit }' {{.VARIANT}}/Dockerfile
+      NODE_IMAGE:
+        sh: awk '/^FROM .* AS node$/ { print $2; exit }' {{.VARIANT}}/Dockerfile
     cmds:
       - docker run
         --rm
         --volume $(pwd)/Dockerfile.tmpl:/input/Dockerfile.tmpl:ro
         --volume $(pwd)/variants/{{.VARIANT}}.yaml:/input/variant.yaml:ro
         --env "BASE_IMAGE={{.BASE_IMAGE}}"
+        --env "PHP_EXTENSION_INSTALLER_IMAGE={{.PHP_EXTENSION_INSTALLER_IMAGE}}"
+        --env "COMPOSER_IMAGE={{.COMPOSER_IMAGE}}"
+        --env "NODE_IMAGE={{.NODE_IMAGE}}"
         hairyhenderson/gomplate:{{.GOMPLATE_TAG_VERSION}}
         --context .=file:///input/variant.yaml
         --file /input/Dockerfile.tmpl
