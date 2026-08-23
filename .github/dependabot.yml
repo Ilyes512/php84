@@ -10,6 +10,8 @@ updates:
       - frankenphp
     schedule:
       interval: "daily"
+    labels:
+      - "docker"
     ignore:
       - dependency-name: "*"
         update-types: ["version-update:semver-major"]
@@ -35,6 +37,8 @@ updates:
     directory: "/"
     schedule:
       interval: "daily"
+    labels:
+      - "github-actions"
     groups:
       specsnl-github-actions:
         patterns:
