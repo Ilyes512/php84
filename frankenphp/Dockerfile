@@ -69,7 +69,7 @@ RUN --mount=type=bind,from=php_extension_installer,source=/usr/bin/install-php-e
 COPY files/general /
 COPY files/frankenphp /
 
-FROM composer/composer:2.10.2-bin AS composer
+FROM composer/composer:2.10.3-bin AS composer
 
 FROM runtime AS builder
 
